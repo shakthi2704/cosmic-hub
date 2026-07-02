@@ -1,0 +1,216 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ───────────────────────────────────────────────
+
+enum CelestialType {
+  PLANET
+  DWARF_PLANET
+  MOON
+  STAR
+  GALAXY
+  NEBULA
+  BLACK_HOLE
+  ASTEROID
+  COMET
+  EXOPLANET
+  OTHER
+}
+
+enum MissionStatus {
+  PLANNED
+  ACTIVE
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum MissionType {
+  FLYBY
+  ORBITER
+  LANDER
+  ROVER
+  CREWED
+  TELESCOPE
+  PROBE
+  OTHER
+}
+
+enum AgencyType {
+  GOVERNMENT
+  PRIVATE
+  INTERNATIONAL
+  RESEARCH
+}
+
+enum PersonRole {
+  ASTRONAUT
+  COSMONAUT
+  SCIENTIST
+  ENGINEER
+  DIRECTOR
+  OTHER
+}
+
+enum RelationType {
+  ORBITS
+  HOSTED_BY
+  PART_OF
+  COMPANION
+  DISCOVERED
+}
+
+// ─── Tables ──────────────────────────────────────────────
+
+model CelestialObject {
+  id         String        @id @default(uuid())
+  slug       String        @unique
+  name       String
+  type       CelestialType
+  summary    String?       @db.Text
+  attributes Json?         @db.JsonB
+  imageUrl   String?
+  massKg     Float?
+  radiusKm   Float?
+  parentId   String?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  parent     CelestialObject?  @relation("ObjectHierarchy", fields: [parentId], references: [id])
+  children   CelestialObject[] @relation("ObjectHierarchy")
+
+  missions       Mission[]        @relation("MissionTarget")
+  relationsFrom  ObjectRelation[] @relation("RelationFrom")
+  relationsTo    ObjectRelation[] @relation("RelationTo")
+
+  @@index([type])
+  @@index([slug])
+  @@index([parentId])
+  @@map("celestial_objects")
+}
+
+model Agency {
+  id           String     @id @default(uuid())
+  slug         String     @unique
+  name         String
+  abbreviation String?
+  countryCode  String?
+  type         AgencyType
+  websiteUrl   String?
+  description  String?    @db.Text
+  foundedYear  Int?
+  imageUrl     String?
+  createdAt    DateTime   @default(now())
+
+  missions Mission[]
+  people   Person[]
+
+  @@index([countryCode])
+  @@index([type])
+  @@map("agencies")
+}
+
+model Mission {
+  id          String        @id @default(uuid())
+  slug        String        @unique
+  name        String
+  status      MissionStatus
+  missionType MissionType
+  launchDate  DateTime?
+  endDate     DateTime?
+  description String?       @db.Text
+  wikiUrl     String?
+  agencyId    String?
+  targetId    String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  agency Agency?          @relation(fields: [agencyId], references: [id])
+  target CelestialObject? @relation("MissionTarget", fields: [targetId], references: [id])
+  crew   MissionCrew[]
+
+  @@index([status])
+  @@index([missionType])
+  @@index([agencyId])
+  @@index([targetId])
+  @@index([launchDate])
+  @@map("missions")
+}
+
+model Person {
+  id          String     @id @default(uuid())
+  slug        String     @unique
+  name        String
+  role        PersonRole
+  nationality String?
+  birthYear   Int?
+  deathYear   Int?
+  bio         String?    @db.Text
+  imageUrl    String?
+  agencyId    String?
+  createdAt   DateTime   @default(now())
+
+  agency   Agency?       @relation(fields: [agencyId], references: [id])
+  missions MissionCrew[]
+
+  @@index([role])
+  @@index([nationality])
+  @@index([agencyId])
+  @@map("people")
+}
+
+model MissionCrew {
+  missionId     String
+  personId      String
+  roleOnMission String?
+
+  mission Mission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  person  Person  @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@id([missionId, personId])
+  @@map("mission_crew")
+}
+
+model ObjectRelation {
+  id           String       @id @default(uuid())
+  fromId       String
+  toId         String
+  relationType RelationType
+  note         String?
+
+  from CelestialObject @relation("RelationFrom", fields: [fromId], references: [id])
+  to   CelestialObject @relation("RelationTo", fields: [toId], references: [id])
+
+  @@unique([fromId, toId, relationType])
+  @@index([fromId])
+  @@index([toId])
+  @@map("object_relations")
+}
+
+model Tag {
+  id       String  @id @default(uuid())
+  slug     String  @unique
+  name     String
+  category String?
+
+  taggables Taggable[]
+
+  @@map("tags")
+}
+
+model Taggable {
+  tagId      String
+  entityType String
+  entityId   String
+
+  tag Tag @relation(fields: [tagId], references: [id])
+
+  @@id([tagId, entityType, entityId])
+  @@index([entityType, entityId])
+  @@map("taggables")
+}
