@@ -119,9 +119,9 @@ export default function SearchDialog({ open, onClose }: Props) {
                             <X className="w-4 h-4" />
                         </button>
                     )}
-                    <kbd className="hidden sm:flex items-center text-[10px] text-white/20 font-mono bg-white/[0.05] border border-white/[0.08] px-1.5 py-0.5 rounded">
+                    {/* <kbd className="hidden sm:flex items-center text-[10px] text-white/20 font-mono bg-white/[0.05] border border-white/[0.08] px-1.5 py-0.5 rounded">
                         ESC
-                    </kbd>
+                    </kbd> */}
                 </div>
 
                 <Separator className="bg-white/[0.07]" />

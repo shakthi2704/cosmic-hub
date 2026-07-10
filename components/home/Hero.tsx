@@ -80,7 +80,7 @@ export default function Hero() {
                 </div>
 
                 {/* Headline */}
-                <h1 className="animate-fade-up delay-1 font-bold leading-[1.05] tracking-tight mb-6">
+                <h1 className="animate-fade-up delay-1 font-hero  font-bold leading-[1.05] tracking-tight mb-6">
                     <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-white">
                         Explore the wonders
                     </span>
