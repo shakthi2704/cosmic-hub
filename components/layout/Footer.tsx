@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-const links = {
+const links: Record<string, { label: string; href?: string; soon?: boolean }[]> = {
     Explore: [
         { label: 'Celestial Objects', href: '/celestial' },
         { label: 'Missions', href: '/missions' },
@@ -9,20 +9,19 @@ const links = {
         { label: 'Live Launches', href: '/launches' },
     ],
     Resources: [
-        { label: 'Encyclopedia', href: '/encyclopedia' },
-        { label: 'Satellite Tracker', href: '/tracker' },
-        { label: 'Observatories', href: '/observatories' },
+        { label: 'Satellite Tracker', soon: true },
+        { label: 'Observatories', soon: true },
         { label: 'NASA API', href: 'https://api.nasa.gov' },
     ],
     Company: [
-        { label: 'About', href: '/about' },
-        { label: 'Mission', href: '/mission' },
-        { label: 'Careers', href: '/careers' },
-        { label: 'Press', href: '/press' },
+        { label: 'About', soon: true },
+        { label: 'Mission', soon: true },
+        { label: 'Careers', soon: true },
+        { label: 'Press', soon: true },
     ],
     Legal: [
-        { label: 'Privacy Policy', href: '/privacy' },
-        { label: 'Terms of Service', href: '/terms' },
+        { label: 'Privacy Policy', soon: true },
+        { label: 'Terms of Service', soon: true },
     ],
 }
 
@@ -79,12 +78,21 @@ export default function Footer() {
                             <ul className="space-y-2.5">
                                 {items.map((item) => (
                                     <li key={item.label}>
-                                        <Link
-                                            href={item.href}
-                                            className="text-xs text-gray-500 hover:text-white transition-colors"
-                                        >
-                                            {item.label}
-                                        </Link>
+                                        {item.soon ? (
+                                            <span className="inline-flex items-center gap-1.5 text-xs text-gray-700 cursor-default">
+                                                {item.label}
+                                                <span className="text-[9px] font-mono uppercase tracking-wider text-gray-800 border border-white/[0.06] rounded-full px-1.5 py-0.5">
+                                                    Soon
+                                                </span>
+                                            </span>
+                                        ) : (
+                                            <Link
+                                                href={item.href!}
+                                                className="text-xs text-gray-500 hover:text-white transition-colors"
+                                            >
+                                                {item.label}
+                                            </Link>
+                                        )}
                                     </li>
                                 ))}
                             </ul>
