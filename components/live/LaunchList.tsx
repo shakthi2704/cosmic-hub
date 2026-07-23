@@ -112,7 +112,9 @@ function FeaturedLaunchCard({ launch }: { launch: Launch }) {
                                     <Calendar className="w-3.5 h-3.5" />
                                     {new Date(launch.net).toLocaleDateString('en-GB', {
                                         day: 'numeric', month: 'short', year: 'numeric',
+                                        timeZone: 'UTC',
                                     })}
+                                    {' '}UTC
                                 </span>
                             )}
                         </div>
@@ -202,6 +204,7 @@ function LaunchRow({ launch, index }: { launch: Launch; index: number }) {
                         <p className="text-xs text-white/50 font-mono">
                             {new Date(launch.net).toLocaleDateString('en-GB', {
                                 day: 'numeric', month: 'short',
+                                timeZone: 'UTC',
                             })}
                         </p>
                     </div>

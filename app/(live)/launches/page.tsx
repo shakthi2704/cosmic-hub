@@ -65,6 +65,7 @@ function CountdownBadge({ launches }: { launches: Awaited<ReturnType<typeof getU
         <p className="text-white/60 text-sm font-mono">
             {new Date(next.net).toLocaleDateString('en-GB', {
                 day: 'numeric', month: 'short', year: 'numeric',
+                timeZone: 'UTC',
             })}
         </p>
     )
