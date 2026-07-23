@@ -3,7 +3,7 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import LaunchList from '@/components/live/LaunchList'
 
-export const revalidate = 300 // revalidate every 5 minutes
+export const dynamic = 'force-dynamic'
 
 export default async function LaunchesPage() {
     let launches: Awaited<ReturnType<typeof getUpcomingLaunches>> = []
