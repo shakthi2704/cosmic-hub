@@ -57,11 +57,30 @@ function StatCard({ label, value }: { label: string; value: string }) {
     )
 }
 
+// ─── Attribute value formatting ────────────────────────────
+
+const ATTRIBUTE_UNITS: Record<string, (v: unknown) => string> = {
+    orbitalPeriodDays: v => `${Number(v).toLocaleString(undefined, { maximumFractionDigits: 1 })} days`,
+    orbitalRadiusAU: v => `${Number(v).toFixed(3)} AU`,
+    equilibriumTempK: v => `${Number(v).toFixed(0)} K`,
+    distanceFromEarthParsecs: v => `${Number(v).toLocaleString(undefined, { maximumFractionDigits: 1 })} pc (${(Number(v) * 3.2616).toFixed(1)} ly)`,
+    radiusEarthRadii: v => `${Number(v).toFixed(2)} R⊕`,
+    massEarthMasses: v => `${Number(v).toLocaleString(undefined, { maximumFractionDigits: 2 })} M⊕`,
+    discoveryYear: v => String(v),
+}
+
+function formatAttributeValue(key: string, value: unknown): string {
+    const formatter = ATTRIBUTE_UNITS[key]
+    if (formatter) return formatter(value)
+    if (typeof value === 'boolean') return value ? 'Yes' : 'No'
+    return String(value)
+}
+
 // ─── Attributes Panel ─────────────────────────────────────
 
 function AttributesPanel({ attributes }: { attributes: Record<string, unknown> }) {
     const entries = Object.entries(attributes).filter(
-        ([k]) => k !== 'source'
+        ([k, v]) => k !== 'source' && v !== null && v !== undefined && v !== ''
     )
     if (entries.length === 0) return null
 
@@ -82,7 +101,7 @@ function AttributesPanel({ attributes }: { attributes: Record<string, unknown> }
                                 {label}
                             </dt>
                             <dd className="text-white/80 text-sm">
-                                {String(value)}
+                                {formatAttributeValue(key, value)}
                             </dd>
                         </div>
                     )
@@ -323,6 +342,12 @@ export default async function CelestialDetailPage({
                                                 {obj.parent.name}
                                             </Link>
                                         </dd>
+                                    </div>
+                                )}
+                                {!obj.parent && typeof attrs.hostStar === 'string' && attrs.hostStar && (
+                                    <div className="border-t border-white/[0.05] pt-3">
+                                        <dt className="text-[10px] font-mono text-white/25 uppercase tracking-wider mb-0.5">Host Star</dt>
+                                        <dd className="text-white/70 text-sm">{attrs.hostStar}</dd>
                                     </div>
                                 )}
                                 {obj.children.length > 0 && (
