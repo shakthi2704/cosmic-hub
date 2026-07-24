@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -141,7 +142,40 @@ export default async function CelestialDetailPage({
                         sizes="100vw"
                     />
                 ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-black" />
+                    <div className="absolute inset-0 overflow-hidden bg-black">
+                        {/* Star field */}
+                        <div className="absolute inset-0" aria-hidden>
+                            {Array.from({ length: 60 }, (_, i) => (
+                                <span
+                                    key={i}
+                                    className="absolute rounded-full bg-white animate-twinkle"
+                                    style={{
+                                        top: `${(i * 53.7) % 100}%`,
+                                        left: `${(i * 71.3) % 100}%`,
+                                        width: i % 9 === 0 ? '2px' : '1px',
+                                        height: i % 9 === 0 ? '2px' : '1px',
+                                        opacity: 0.15 + (i % 8) * 0.05,
+                                        '--dur': `${3 + (i % 5)}s`,
+                                        animationDelay: `${i % 6}s`,
+                                    } as CSSProperties}
+                                />
+                            ))}
+                        </div>
+                        {/* Glowing sphere */}
+                        <div
+                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full animate-float"
+                            style={{
+                                width: 220,
+                                height: 220,
+                                background: `radial-gradient(circle at 35% 30%, ${meta.accent}cc, ${meta.accent}33 55%, transparent 75%)`,
+                                boxShadow: `0 0 90px 20px ${meta.accent}22`,
+                            }}
+                        />
+                        <div
+                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border"
+                            style={{ width: 260, height: 260, borderColor: `${meta.accent}25` }}
+                        />
+                    </div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/20" />
 
