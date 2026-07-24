@@ -3,6 +3,7 @@ config({ path: '.env.local' })
 
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
+import { generateExoplanetSummary } from './lib/exoplanet-enrichment'
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
 const db = new PrismaClient({ adapter })
@@ -44,24 +45,6 @@ function slugify(name: string): string {
         .replace(/^-+|-+$/g, '')
 }
 
-function summarize(row: ExoplanetRow): string {
-    const parts: string[] = []
-    parts.push(
-        row.hostname
-            ? `${row.pl_name} is a confirmed exoplanet orbiting the star ${row.hostname}.`
-            : `${row.pl_name} is a confirmed exoplanet.`
-    )
-    if (row.discoverymethod) {
-        parts.push(
-            `Discovered via ${row.discoverymethod.toLowerCase()}${row.disc_year ? ` in ${row.disc_year}` : ''}${row.disc_facility ? ` by ${row.disc_facility}` : ''}.`
-        )
-    }
-    if (row.pl_rade) {
-        parts.push(`It has a radius of about ${row.pl_rade.toFixed(2)} Earth radii.`)
-    }
-    return parts.join(' ')
-}
-
 async function fetchExoplanets(): Promise<ExoplanetRow[]> {
     const url = `${TAP_URL}?query=${encodeURIComponent(ADQL)}&format=json`
     const res = await fetch(url)
@@ -92,7 +75,19 @@ async function main() {
                 slug,
                 name: row.pl_name,
                 type: 'EXOPLANET' as const,
-                summary: summarize(row),
+                summary: generateExoplanetSummary({
+                    name: row.pl_name,
+                    hostStar: row.hostname,
+                    discoveryMethod: row.discoverymethod,
+                    discoveryYear: row.disc_year,
+                    discoveryFacility: row.disc_facility,
+                    orbitalPeriodDays: row.pl_orbper,
+                    orbitalRadiusAU: row.pl_orbsmax,
+                    equilibriumTempK: row.pl_eqt,
+                    distanceParsecs: row.sy_dist,
+                    radiusEarthRadii: row.pl_rade,
+                    massEarthMasses: row.pl_bmasse,
+                }),
                 massKg: row.pl_bmasse ? row.pl_bmasse * EARTH_MASS_KG : null,
                 radiusKm: row.pl_rade ? row.pl_rade * EARTH_RADIUS_KM : null,
                 attributes: {
