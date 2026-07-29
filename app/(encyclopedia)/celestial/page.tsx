@@ -1,8 +1,8 @@
+import { Fragment } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { CelestialType } from '@prisma/client'
 import { getCelestialObjects, getCelestialTypeCounts } from '@/lib/services/celestial.service'
-import { categories } from '@/config/nav'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import ViewToggle from '@/components/encyclopedia/ViewToggle'
@@ -50,8 +50,28 @@ function ObjectCardGrid({ obj }: { obj: Awaited<ReturnType<typeof getCelestialOb
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                 ) : (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-16 h-16 rounded-full planet-blue opacity-60" />
+                    <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+                        {Array.from({ length: 14 }, (_, i) => (
+                            <span
+                                key={i}
+                                className="absolute rounded-full bg-white animate-twinkle"
+                                style={{
+                                    top: `${(i * 37.1) % 100}%`,
+                                    left: `${(i * 61.7) % 100}%`,
+                                    width: '1px',
+                                    height: '1px',
+                                    opacity: 0.15 + (i % 5) * 0.05,
+                                    animationDelay: `${i % 5}s`,
+                                }}
+                            />
+                        ))}
+                        <div
+                            className="w-16 h-16 rounded-full"
+                            style={{
+                                background: `radial-gradient(circle at 35% 30%, ${meta.accent}cc, ${meta.accent}33 55%, transparent 75%)`,
+                                boxShadow: `0 0 30px 6px ${meta.accent}25`,
+                            }}
+                        />
                     </div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
@@ -98,7 +118,12 @@ function ObjectCardList({ obj }: { obj: Awaited<ReturnType<typeof getCelestialOb
                     <Image src={obj.imageUrl} alt={obj.name} fill className="object-cover opacity-80 group-hover:opacity-100 transition-opacity" sizes="56px" />
                 ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-7 h-7 rounded-full planet-blue opacity-60" />
+                        <div
+                            className="w-7 h-7 rounded-full"
+                            style={{
+                                background: `radial-gradient(circle at 35% 30%, ${meta.accent}cc, ${meta.accent}33 55%, transparent 75%)`,
+                            }}
+                        />
                     </div>
                 )}
             </div>
@@ -143,13 +168,13 @@ function FilterSidebar({
     const countMap = Object.fromEntries(typeCounts.map(t => [t.type, t.count])) as Partial<Record<CelestialType, number>>
     const total = typeCounts.reduce((a, b) => a + b.count, 0)
 
-    const typeFilters = categories
-        .filter((c) => c.type !== 'MISSION')
-        .map((c) => ({
-            label: c.label,
-            type: c.type as CelestialType,
-            accent: c.accent,
-            count: countMap[c.type as CelestialType] ?? 0,
+    const typeFilters = typeCounts
+        .filter((t) => t.count > 0)
+        .map((t) => ({
+            label: TYPE_META[t.type].label,
+            type: t.type,
+            accent: TYPE_META[t.type].accent,
+            count: countMap[t.type] ?? 0,
         }))
 
     return (
@@ -242,12 +267,11 @@ function Pagination({
             {pages.map((p, i) => {
                 const prevPage = pages[i - 1]
                 return (
-                    <>
+                    <Fragment key={p}>
                         {prevPage && p - prevPage > 1 && (
                             <span key={`ellipsis-${p}`} className="text-white/20 text-sm px-1">…</span>
                         )}
                         <Link
-                            key={p}
                             href={`${base}page=${p}`}
                             className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm font-mono transition-colors ${p === page
                                 ? 'bg-white/10 text-white border border-white/20'
@@ -256,7 +280,7 @@ function Pagination({
                         >
                             {p}
                         </Link>
-                    </>
+                    </Fragment>
                 )
             })}
 

@@ -154,6 +154,16 @@ export default async function PersonDetailPage({
                                 <p className="text-white/70 leading-relaxed text-[15px]">
                                     {person.bio}
                                 </p>
+                                {person.wikiUrl && (
+                                    <a
+                                        href={person.wikiUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1.5 mt-4 text-xs text-blue-400 hover:text-blue-300 transition-colors font-mono"
+                                    >
+                                        Read more on Wikipedia →
+                                    </a>
+                                )}
                             </div>
                         )}
 

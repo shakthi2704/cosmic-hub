@@ -151,6 +151,7 @@ model Person {
   birthYear   Int?
   deathYear   Int?
   bio         String?    @db.Text
+  wikiUrl     String?
   imageUrl    String?
   agencyId    String?
   createdAt   DateTime   @default(now())

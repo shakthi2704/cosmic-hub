@@ -371,8 +371,9 @@ async function main() {
             nationality: 'American',
             birthYear: 1930,
             deathYear: 2012,
-            agencyId: nasa.id,
+            agency: { connect: { id: nasa.id } },
             imageUrl: 'https://images.unsplash.com/photo-1614313913007-2b4ae8ce32d6?w=400&q=80',
+            wikiUrl: 'https://en.wikipedia.org/wiki/Neil_Armstrong',
             bio: 'Neil Alden Armstrong was an American astronaut and aeronautical engineer who became the first person to walk on the Moon on July 20, 1969, during the Apollo 11 mission. Before joining NASA, he was a naval aviator and test pilot. His famous words upon landing — "That\'s one small step for man, one giant leap for mankind" — are among the most quoted in history.',
         },
     })
@@ -386,8 +387,9 @@ async function main() {
             role: 'ASTRONAUT',
             nationality: 'American',
             birthYear: 1930,
-            agencyId: nasa.id,
+            agency: { connect: { id: nasa.id } },
             imageUrl: 'https://images.unsplash.com/photo-1454789548928-9efd52dc4031?w=400&q=80',
+            wikiUrl: 'https://en.wikipedia.org/wiki/Buzz_Aldrin',
             bio: 'Buzz Aldrin is an American former astronaut, engineer, and fighter pilot who was the Lunar Module Pilot on Apollo 11. He was the second person to walk on the Moon. A graduate of West Point and MIT, Aldrin has been a passionate advocate for space exploration and Mars colonization throughout his life.',
         },
     })
@@ -401,8 +403,9 @@ async function main() {
             role: 'COSMONAUT',
             nationality: 'Russian',
             birthYear: 1937,
-            agencyId: roscosmos.id,
+            agency: { connect: { id: roscosmos.id } },
             imageUrl: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=400&q=80',
+            wikiUrl: 'https://en.wikipedia.org/wiki/Valentina_Tereshkova',
             bio: 'Valentina Vladimirovna Tereshkova is a Russian engineer and former cosmonaut who became the first woman to fly in space on June 16, 1963, aboard Vostok 6. She orbited Earth 48 times over three days. She was selected from more than 400 applicants and five finalists for the historic mission.',
         },
     })
@@ -417,8 +420,9 @@ async function main() {
             nationality: 'Russian',
             birthYear: 1934,
             deathYear: 1968,
-            agencyId: roscosmos.id,
+            agency: { connect: { id: roscosmos.id } },
             imageUrl: 'https://images.unsplash.com/photo-1516849677043-ef67c9557e16?w=400&q=80',
+            wikiUrl: 'https://en.wikipedia.org/wiki/Yuri_Gagarin',
             bio: 'Yuri Alekseyevich Gagarin was a Soviet pilot and cosmonaut who became the first human to journey into outer space on April 12, 1961. His spacecraft, Vostok 1, completed one orbit around Earth. Gagarin became an international celebrity and was awarded the Hero of the Soviet Union, the nation\'s highest honour.',
         },
     })
@@ -433,8 +437,9 @@ async function main() {
             nationality: 'American',
             birthYear: 1934,
             deathYear: 1996,
-            agencyId: nasa.id,
+            agency: { connect: { id: nasa.id } },
             imageUrl: 'https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?w=400&q=80',
+            wikiUrl: 'https://en.wikipedia.org/wiki/Carl_Sagan',
             bio: 'Carl Edward Sagan was an American astronomer, planetary scientist, cosmologist, and author. He is best known for his work as a science communicator, his book and television series Cosmos, and his role in the Voyager Golden Record project. Sagan contributed to many NASA missions and was instrumental in the search for extraterrestrial intelligence.',
         },
     })
@@ -450,6 +455,7 @@ async function main() {
             birthYear: 1942,
             deathYear: 2018,
             imageUrl: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=400&q=80',
+            wikiUrl: 'https://en.wikipedia.org/wiki/Stephen_Hawking',
             bio: 'Stephen William Hawking was an English theoretical physicist, cosmologist, and author. He was the Lucasian Professor of Mathematics at Cambridge. His groundbreaking work on black holes and cosmology, including Hawking radiation, revolutionised our understanding of the universe. Despite being diagnosed with motor neurone disease at 21, he continued working for over five decades.',
         },
     })
@@ -464,8 +470,9 @@ async function main() {
             nationality: 'American',
             birthYear: 1962,
             deathYear: 2003,
-            agencyId: nasa.id,
+            agency: { connect: { id: nasa.id } },
             imageUrl: 'https://images.unsplash.com/photo-1614313913007-2b4ae8ce32d6?w=400&q=80',
+            wikiUrl: 'https://en.wikipedia.org/wiki/Kalpana_Chawla',
             bio: 'Kalpana Chawla was an American astronaut and aerospace engineer. She was the first woman of Indian origin to go to space, flying on Space Shuttle Columbia in 1997. She died in 2003 when Columbia disintegrated during re-entry. Chawla remains an enduring inspiration for millions, particularly in India and among women in STEM fields.',
         },
     })
@@ -484,7 +491,7 @@ async function main() {
             missionType: 'CREWED',
             launchDate: new Date('1969-07-16'),
             endDate: new Date('1969-07-24'),
-            agencyId: nasa.id,
+            agency: { connect: { id: nasa.id } },
             description:
                 'Apollo 11 was the American spaceflight that first landed humans on the Moon. Commander Neil Armstrong and Lunar Module Pilot Buzz Aldrin landed on July 20, 1969, while Command Module Pilot Michael Collins orbited above. Armstrong became the first person to step onto the lunar surface, followed by Aldrin. They spent 21 hours on the Moon and returned with 21.5 kg of lunar material.',
             wikiUrl: 'https://en.wikipedia.org/wiki/Apollo_11',
@@ -500,7 +507,7 @@ async function main() {
             status: 'ACTIVE',
             missionType: 'PROBE',
             launchDate: new Date('1977-09-05'),
-            agencyId: nasa.id,
+            agency: { connect: { id: nasa.id } },
             description:
                 'Voyager 1 is a space probe launched by NASA to study the outer Solar System. It is the farthest human-made object from Earth, currently in interstellar space. The probe carries a Golden Record — a phonograph record containing sounds and images selected to portray the diversity of life and culture on Earth.',
             wikiUrl: 'https://en.wikipedia.org/wiki/Voyager_1',
@@ -516,7 +523,7 @@ async function main() {
             status: 'ACTIVE',
             missionType: 'ROVER',
             launchDate: new Date('2011-11-26'),
-            agencyId: nasa.id,
+            agency: { connect: { id: nasa.id } },
             description:
                 'Curiosity is a car-sized Mars rover designed to explore the Gale crater as part of NASA\'s Mars Science Laboratory mission. It landed on August 6, 2012 and has been operating for over a decade. Curiosity has confirmed that Mars once had conditions suitable for microbial life.',
             wikiUrl: 'https://en.wikipedia.org/wiki/Curiosity_(rover)',
@@ -532,7 +539,7 @@ async function main() {
             status: 'ACTIVE',
             missionType: 'TELESCOPE',
             launchDate: new Date('2021-12-25'),
-            agencyId: nasa.id,
+            agency: { connect: { id: nasa.id } },
             description:
                 'The James Webb Space Telescope (JWST) is a space telescope designed to conduct infrared astronomy. As the largest optical telescope in space, its high resolution and sensitivity allow it to view objects too old, distant, or faint for Hubble. It observes in the infrared spectrum, enabling it to see the first galaxies that formed after the Big Bang.',
             wikiUrl: 'https://en.wikipedia.org/wiki/James_Webb_Space_Telescope',
@@ -548,7 +555,7 @@ async function main() {
             status: 'ACTIVE',
             missionType: 'TELESCOPE',
             launchDate: new Date('1990-04-24'),
-            agencyId: nasa.id,
+            agency: { connect: { id: nasa.id } },
             description:
                 'The Hubble Space Telescope is a space telescope that was launched into low Earth orbit in 1990 and remains operational. It is not the first space telescope, but it is one of the largest and most versatile, renowned both as a vital research tool and as a public relations boon for astronomy.',
             wikiUrl: 'https://en.wikipedia.org/wiki/Hubble_Space_Telescope',
@@ -564,7 +571,7 @@ async function main() {
             status: 'ACTIVE',
             missionType: 'ROVER',
             launchDate: new Date('2020-07-30'),
-            agencyId: nasa.id,
+            agency: { connect: { id: nasa.id } },
             description:
                 'Perseverance is a Mars rover manufactured by NASA\'s Jet Propulsion Laboratory. It landed in Jezero Crater on February 18, 2021. The mission is designed to seek signs of ancient microbial life, collect rock and soil samples for potential return to Earth, and test oxygen production from the Martian atmosphere.',
             wikiUrl: 'https://en.wikipedia.org/wiki/Perseverance_(rover)',
@@ -581,7 +588,7 @@ async function main() {
             missionType: 'ORBITER',
             launchDate: new Date('1997-10-15'),
             endDate: new Date('2017-09-15'),
-            agencyId: nasa.id,
+            agency: { connect: { id: nasa.id } },
             description:
                 'Cassini–Huygens was a collaboration between NASA, the ESA, and the Italian Space Agency to send a probe to study the planet Saturn and its system. The Cassini probe orbited Saturn for 13 years and the Huygens lander descended to Titan\'s surface. The mission ended with the Grand Finale — a controlled descent into Saturn\'s atmosphere.',
             wikiUrl: 'https://en.wikipedia.org/wiki/Cassini%E2%80%93Huygens',
@@ -597,7 +604,7 @@ async function main() {
             status: 'ACTIVE',
             missionType: 'FLYBY',
             launchDate: new Date('2006-01-19'),
-            agencyId: nasa.id,
+            agency: { connect: { id: nasa.id } },
             description:
                 'New Horizons is an interplanetary space probe launched by NASA. In 2015 it performed a flyby study of the Pluto system, providing the first close-up images of Pluto. The spacecraft then continued into the Kuiper Belt, flying past the Arrokoth object in 2019 — the most distant object ever explored by a spacecraft.',
             wikiUrl: 'https://en.wikipedia.org/wiki/New_Horizons',
@@ -612,8 +619,8 @@ async function main() {
         where: { missionId_personId: { missionId: apollo11.id, personId: armstrong.id } },
         update: {},
         create: {
-            missionId: apollo11.id,
-            personId: armstrong.id,
+            mission: { connect: { id: apollo11.id } },
+            person: { connect: { id: armstrong.id } },
             roleOnMission: 'Commander',
         },
     })
@@ -622,8 +629,8 @@ async function main() {
         where: { missionId_personId: { missionId: apollo11.id, personId: aldrin.id } },
         update: {},
         create: {
-            missionId: apollo11.id,
-            personId: aldrin.id,
+            mission: { connect: { id: apollo11.id } },
+            person: { connect: { id: aldrin.id } },
             roleOnMission: 'Lunar Module Pilot',
         },
     })
@@ -688,7 +695,7 @@ async function main() {
             },
             update: {},
             create: {
-                tagId: tags[t.tagSlug].id,
+                tag: { connect: { id: tags[t.tagSlug].id } },
                 entityType: t.entityType,
                 entityId: t.entityId,
             },

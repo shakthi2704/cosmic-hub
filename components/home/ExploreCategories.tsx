@@ -37,14 +37,42 @@ export default function ExploreCategories() {
                         <Link key={cat.slug} href={cat.href}>
                             <div className="group relative rounded-2xl overflow-hidden border border-white/[0.08] hover:border-white/[0.20] transition-all duration-300 cursor-pointer h-52">
 
-                                {/* Background image */}
-                                <Image
-                                    src={cat.image}
-                                    alt={cat.label}
-                                    fill
-                                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                    sizes="(max-width: 768px) 50vw, 33vw"
-                                />
+                                {/* Background image or CSS fallback */}
+                                {cat.image ? (
+                                    <Image
+                                        src={cat.image}
+                                        alt={cat.label}
+                                        fill
+                                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                        sizes="(max-width: 768px) 50vw, 33vw"
+                                    />
+                                ) : (
+                                    <div className="absolute inset-0 bg-black overflow-hidden">
+                                        {Array.from({ length: 24 }, (_, i) => (
+                                            <span
+                                                key={i}
+                                                className="absolute rounded-full bg-white animate-twinkle"
+                                                style={{
+                                                    top: `${(i * 41.3) % 100}%`,
+                                                    left: `${(i * 67.9) % 100}%`,
+                                                    width: '1px',
+                                                    height: '1px',
+                                                    opacity: 0.15 + (i % 6) * 0.05,
+                                                    animationDelay: `${i % 5}s`,
+                                                }}
+                                            />
+                                        ))}
+                                        <div
+                                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full transition-transform duration-500 group-hover:scale-105"
+                                            style={{
+                                                width: 140,
+                                                height: 140,
+                                                background: `radial-gradient(circle at 35% 30%, ${cat.accent}cc, ${cat.accent}33 55%, transparent 75%)`,
+                                                boxShadow: `0 0 60px 15px ${cat.accent}22`,
+                                            }}
+                                        />
+                                    </div>
+                                )}
 
                                 {/* Overlay */}
                                 <div className="absolute inset-0 bg-[#04040a]/35 group-hover:bg-[#04040a]/20 transition-colors duration-300" />
