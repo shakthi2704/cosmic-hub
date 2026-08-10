@@ -116,3 +116,10 @@ export async function getFeaturedObjects() {
         },
     })
 }
+
+export async function getPlanetsForOrbitScene() {
+    return db.celestialObject.findMany({
+        where: { type: 'PLANET' },
+        select: { slug: true, name: true, radiusKm: true },
+    })
+}

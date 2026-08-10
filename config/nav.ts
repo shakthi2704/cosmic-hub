@@ -1,6 +1,7 @@
 export const navLinks = [
     { label: 'Home', href: '/' },
     { label: 'Explore', href: '/celestial' },
+    { label: 'Solar System', href: '/solar-system' },
     { label: 'Missions', href: '/missions' },
     { label: 'People', href: '/people' },
     { label: 'Live', href: '/launches' },
