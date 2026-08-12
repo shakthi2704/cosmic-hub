@@ -5,6 +5,7 @@ export const navLinks = [
     { label: 'Missions', href: '/missions' },
     { label: 'People', href: '/people' },
     { label: 'Live', href: '/launches' },
+    { label: 'Sky Tonight', href: '/sky' },   // NEW
 ] as const
 
 export const categories = [
