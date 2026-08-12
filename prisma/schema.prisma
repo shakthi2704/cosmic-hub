@@ -47,6 +47,10 @@ enum AgencyType {
   INTERNATIONAL
   RESEARCH
 }
+enum ArticleKind {
+  GLOSSARY
+  FEATURE
+}
 
 enum PersonRole {
   ASTRONAUT
@@ -214,4 +218,20 @@ model Taggable {
   @@id([tagId, entityType, entityId])
   @@index([entityType, entityId])
   @@map("taggables")
+}
+model Article {
+  id          String      @id @default(uuid())
+  slug        String      @unique
+  title       String
+  excerpt     String?
+  body        String      @db.Text
+  kind        ArticleKind
+  coverImage  String?
+  published   Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([kind])
+  @@index([published])
+  @@map("articles")
 }

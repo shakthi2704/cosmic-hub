@@ -7,6 +7,7 @@ import { PrismaPg } from '@prisma/adapter-pg'
 const connectionString = process.env.DATABASE_URL!
 const adapter = new PrismaPg({ connectionString })
 const db = new PrismaClient({ adapter })
+import { seedArticles } from './seed-articles'
 
 async function main() {
     console.log('🌌 Seeding CosmicHub database...')
@@ -703,6 +704,7 @@ async function main() {
     }
 
     console.log('✅ Tags seeded')
+    await seedArticles(db)
     console.log('🚀 CosmicHub database seed complete!')
 }
 
