@@ -67,6 +67,35 @@ export async function getNASAApod(): Promise<ApodData> {
     })
 }
 
+// ─── ISS Position ───────────────────────────────────────────
+
+export interface ISSPosition {
+    latitude: number
+    longitude: number
+    altitude: number // km
+    velocity: number // km/h
+    visibility: 'daylight' | 'eclipsed'
+    timestamp: number // unix seconds
+}
+
+export async function getISSPosition(): Promise<ISSPosition> {
+    return withCache('live:iss', TTL.LIVE_ISS, async () => {
+        const res = await fetch('https://api.wheretheiss.at/v1/satellites/25544', {
+            next: { revalidate: TTL.LIVE_ISS },
+        })
+        if (!res.ok) throw new Error(`ISS API error: ${res.status}`)
+        const data = await res.json()
+        return {
+            latitude: data.latitude,
+            longitude: data.longitude,
+            altitude: data.altitude,
+            velocity: data.velocity,
+            visibility: data.visibility,
+            timestamp: data.timestamp,
+        } as ISSPosition
+    })
+}
+
 // ─── Space News ───────────────────────────────────────────
 
 export async function getSpaceNews(limit = 6): Promise<NewsArticle[]> {
@@ -80,3 +109,64 @@ export async function getSpaceNews(limit = 6): Promise<NewsArticle[]> {
         return data.results as NewsArticle[]
     })
 }
+
+
+// ─── Near-Earth Objects ─────────────────────────────────────
+
+export interface NearEarthObject {
+    id: string
+    name: string
+    jplUrl: string
+    diameterMinKm: number
+    diameterMaxKm: number
+    hazardous: boolean
+    closeApproachDate: string // YYYY-MM-DD
+    missDistanceKm: number
+    missDistanceLunar: number // distance in multiples of the Moon's orbit
+    velocityKmS: number
+}
+
+function toYMD(date: Date): string {
+    return date.toISOString().slice(0, 10)
+}
+
+export async function getNearEarthObjects(): Promise<NearEarthObject[]> {
+    return withCache('live:neo', TTL.LIVE_NEO, async () => {
+        const key = process.env.NASA_API_KEY
+        const start = new Date()
+        const end = new Date()
+        end.setDate(end.getDate() + 7)
+
+        const res = await fetch(
+            `https://api.nasa.gov/neo/rest/v1/feed?start_date=${toYMD(start)}&end_date=${toYMD(end)}&api_key=${key}`,
+            { next: { revalidate: TTL.LIVE_NEO } }
+        )
+        if (!res.ok) throw new Error(`NeoWs API error: ${res.status}`)
+        const data = await res.json()
+
+        const objects: NearEarthObject[] = []
+        for (const date of Object.keys(data.near_earth_objects)) {
+            for (const neo of data.near_earth_objects[date]) {
+                const approach = neo.close_approach_data[0]
+                if (!approach) continue
+                objects.push({
+                    id: neo.id,
+                    name: neo.name,
+                    jplUrl: neo.nasa_jpl_url,
+                    diameterMinKm: neo.estimated_diameter.kilometers.estimated_diameter_min,
+                    diameterMaxKm: neo.estimated_diameter.kilometers.estimated_diameter_max,
+                    hazardous: neo.is_potentially_hazardous_asteroid,
+                    closeApproachDate: approach.close_approach_date,
+                    missDistanceKm: parseFloat(approach.miss_distance.kilometers),
+                    missDistanceLunar: parseFloat(approach.miss_distance.lunar),
+                    velocityKmS: parseFloat(approach.relative_velocity.kilometers_per_second),
+                })
+            }
+        }
+
+        objects.sort((a, b) => a.closeApproachDate.localeCompare(b.closeApproachDate) || a.missDistanceKm - b.missDistanceKm)
+        return objects
+    })
+}
+
+// ─── Space News ───────────────────────────────────────────

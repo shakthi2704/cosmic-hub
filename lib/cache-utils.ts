@@ -4,6 +4,8 @@ export const TTL = {
     LIVE_LAUNCHES: 60 * 5,
     LIVE_WEATHER: 60 * 15,
     LIVE_EVENTS: 60 * 60,
+    LIVE_ISS: 10,
+    LIVE_NEO: 60 * 30,
     SEARCH: 60 * 10,
     STATIC_LIST: 60 * 60 * 24,
 } as const

@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Search } from 'lucide-react'
-import { useState, useEffect, useCallback } from 'react'
+import { Search, ChevronDown, Menu, X } from 'lucide-react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { navLinks } from '@/config/nav'
 import { cn } from '@/lib/utils'
 import SearchDialog from '@/components/search/SearchDialog'
@@ -11,6 +11,9 @@ import SearchDialog from '@/components/search/SearchDialog'
 export default function Navbar() {
     const pathname = usePathname()
     const [searchOpen, setSearchOpen] = useState(false)
+    const [mobileOpen, setMobileOpen] = useState(false)
+    const [openGroup, setOpenGroup] = useState<string | null>(null)
+    const groupRef = useRef<HTMLDivElement>(null)
 
     const openSearch = useCallback(() => setSearchOpen(true), [])
     const closeSearch = useCallback(() => setSearchOpen(false), [])
@@ -26,6 +29,23 @@ export default function Navbar() {
         window.addEventListener('keydown', handler)
         return () => window.removeEventListener('keydown', handler)
     }, [])
+
+    // Close dropdown on outside click
+    useEffect(() => {
+        if (!openGroup) return
+        const handler = (e: MouseEvent) => {
+            if (groupRef.current && !groupRef.current.contains(e.target as Node)) {
+                setOpenGroup(null)
+            }
+        }
+        window.addEventListener('mousedown', handler)
+        return () => window.removeEventListener('mousedown', handler)
+    }, [openGroup])
+
+    // Close mobile drawer on route change
+    useEffect(() => {
+        setMobileOpen(false)
+    }, [pathname])
 
     return (
         <>
@@ -48,24 +68,67 @@ export default function Navbar() {
                         </span>
                     </Link>
 
-                    {/* Nav */}
+                    {/* Desktop nav */}
                     <nav className="hidden md:flex items-center h-full">
-                        {navLinks.map((link) => {
-                            const active = pathname === link.href
+                        {navLinks.map((entry) => {
+                            if (entry.type === 'link') {
+                                const active = pathname === entry.href
+                                return (
+                                    <Link
+                                        key={entry.href}
+                                        href={entry.href}
+                                        className={cn(
+                                            'relative flex items-center h-full px-4 text-[13px] font-medium transition-colors',
+                                            active ? 'text-white' : 'text-gray-500 hover:text-gray-200'
+                                        )}
+                                    >
+                                        {entry.label}
+                                        {active && (
+                                            <span className="absolute bottom-0 inset-x-4 h-[2px] bg-blue-500 rounded-t-full" />
+                                        )}
+                                    </Link>
+                                )
+                            }
+
+                            // Group (dropdown)
+                            const active = entry.items.some(i => i.href === pathname)
+                            const isOpen = openGroup === entry.label
                             return (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    className={cn(
-                                        'relative flex items-center h-full px-4 text-[13px] font-medium transition-colors',
-                                        active ? 'text-white' : 'text-gray-500 hover:text-gray-200'
+                                <div key={entry.label} ref={isOpen ? groupRef : undefined} className="relative h-full">
+                                    <button
+                                        onClick={() => setOpenGroup(isOpen ? null : entry.label)}
+                                        className={cn(
+                                            'relative flex items-center gap-1 h-full px-4 text-[13px] font-medium transition-colors',
+                                            active || isOpen ? 'text-white' : 'text-gray-500 hover:text-gray-200'
+                                        )}
+                                    >
+                                        {entry.label}
+                                        <ChevronDown className={cn('w-3 h-3 transition-transform', isOpen && 'rotate-180')} />
+                                        {active && (
+                                            <span className="absolute bottom-0 inset-x-4 h-[2px] bg-blue-500 rounded-t-full" />
+                                        )}
+                                    </button>
+                                    {isOpen && (
+                                        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-44 rounded-xl border border-white/[0.08] bg-black/95 backdrop-blur-xl shadow-2xl py-1.5 overflow-hidden">
+                                            {entry.items.map((item) => {
+                                                const itemActive = pathname === item.href
+                                                return (
+                                                    <Link
+                                                        key={item.href}
+                                                        href={item.href}
+                                                        onClick={() => setOpenGroup(null)}
+                                                        className={cn(
+                                                            'flex items-center px-3.5 py-2 text-[13px] transition-colors',
+                                                            itemActive ? 'text-white bg-white/[0.06]' : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
+                                                        )}
+                                                    >
+                                                        {item.label}
+                                                    </Link>
+                                                )
+                                            })}
+                                        </div>
                                     )}
-                                >
-                                    {link.label}
-                                    {active && (
-                                        <span className="absolute bottom-0 inset-x-4 h-[2px] bg-blue-500 rounded-t-full" />
-                                    )}
-                                </Link>
+                                </div>
                             )
                         })}
                     </nav>
@@ -86,16 +149,70 @@ export default function Navbar() {
                         >
                             <Search className="w-4 h-4" />
                         </button>
-                        <button className="w-8 h-8 rounded-full border border-white/[0.08] bg-white/[0.04] flex items-center justify-center hover:bg-white/[0.1] transition-colors overflow-hidden">
+                        <button className="hidden md:flex w-8 h-8 rounded-full border border-white/[0.08] bg-white/[0.04] items-center justify-center hover:bg-white/[0.1] transition-colors overflow-hidden">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-4 h-4 text-gray-400">
                                 <circle cx="12" cy="8" r="4" />
                                 <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
                             </svg>
                         </button>
+                        {/* Mobile menu toggle */}
+                        <button
+                            onClick={() => setMobileOpen(prev => !prev)}
+                            className="md:hidden w-8 h-8 flex items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.04] text-gray-400 hover:text-white transition-colors"
+                        >
+                            {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+                        </button>
                     </div>
 
                 </div>
             </header>
+
+            {/* Mobile drawer */}
+            {mobileOpen && (
+                <div className="md:hidden fixed top-14 inset-x-0 z-40 border-b border-white/[0.06] bg-black/95 backdrop-blur-xl max-h-[calc(100vh-3.5rem)] overflow-y-auto">
+                    <nav className="px-6 py-4 flex flex-col gap-1">
+                        {navLinks.map((entry) => {
+                            if (entry.type === 'link') {
+                                const active = pathname === entry.href
+                                return (
+                                    <Link
+                                        key={entry.href}
+                                        href={entry.href}
+                                        className={cn(
+                                            'px-3 py-2.5 rounded-lg text-[14px] font-medium transition-colors',
+                                            active ? 'text-white bg-white/[0.06]' : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
+                                        )}
+                                    >
+                                        {entry.label}
+                                    </Link>
+                                )
+                            }
+                            return (
+                                <div key={entry.label} className="pt-2">
+                                    <p className="px-3 pb-1 text-[11px] font-mono uppercase tracking-widest text-white/30">
+                                        {entry.label}
+                                    </p>
+                                    {entry.items.map((item) => {
+                                        const active = pathname === item.href
+                                        return (
+                                            <Link
+                                                key={item.href}
+                                                href={item.href}
+                                                className={cn(
+                                                    'block px-3 py-2.5 rounded-lg text-[14px] font-medium transition-colors',
+                                                    active ? 'text-white bg-white/[0.06]' : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
+                                                )}
+                                            >
+                                                {item.label}
+                                            </Link>
+                                        )
+                                    })}
+                                </div>
+                            )
+                        })}
+                    </nav>
+                </div>
+            )}
 
             <SearchDialog open={searchOpen} onClose={closeSearch} />
         </>

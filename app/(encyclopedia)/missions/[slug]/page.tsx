@@ -29,17 +29,17 @@ const TYPE_META: Record<MissionType, { label: string; icon: React.ReactNode }> =
 }
 
 const MISSION_IMAGES: Record<string, string> = {
-    'apollo-11': 'https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=1400&q=85',
-    'voyager-1': 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=1400&q=85',
-    'curiosity': 'https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=1400&q=85',
-    'james-webb-space-telescope': 'https://images.unsplash.com/photo-1614732484003-ef9881555dc3?w=1400&q=85',
-    'hubble-space-telescope': 'https://images.unsplash.com/photo-1516849677043-ef67c9557e16?w=1400&q=85',
-    'perseverance': 'https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=1400&q=85',
-    'cassini-huygens': 'https://images.unsplash.com/photo-1639921884918-8d28ab2e39a4?w=1400&q=85',
-    'new-horizons': 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=1400&q=85',
+    'apollo-11': 'https://images-assets.nasa.gov/image/as11-40-5875/as11-40-5875~medium.jpg',
+    'voyager-1': 'https://images-assets.nasa.gov/image/PIA21741/PIA21741~medium.jpg',
+    'curiosity': 'https://images-assets.nasa.gov/image/PIA22486/PIA22486~medium.jpg',
+    'james-webb-space-telescope': 'https://images-assets.nasa.gov/image/NHQ202112250021/NHQ202112250021~medium.jpg',
+    'hubble-space-telescope': 'https://images-assets.nasa.gov/image/sts061-57-021/sts061-57-021~medium.jpg',
+    'perseverance': 'https://images-assets.nasa.gov/image/PIA24542/PIA24542~medium.jpg',
+    'cassini-huygens': 'https://images-assets.nasa.gov/image/PIA17199/PIA17199~small.jpg',
+    'new-horizons': 'https://images-assets.nasa.gov/image/PIA09234/PIA09234~small.jpg',
 }
 
-const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1400&q=85'
+const FALLBACK_IMAGE = 'https://images-assets.nasa.gov/image/PIA23122/PIA23122~medium.jpg'
 
 function formatDate(date: Date | null): string {
     if (!date) return '—'

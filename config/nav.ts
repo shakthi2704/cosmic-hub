@@ -1,13 +1,26 @@
-export const navLinks = [
-    { label: 'Home', href: '/' },
-    { label: 'Explore', href: '/celestial' },
-    { label: 'Solar System', href: '/solar-system' },
-    { label: 'Missions', href: '/missions' },
-    { label: 'People', href: '/people' },
-    { label: 'Live', href: '/launches' },
-    { label: 'Sky Tonight', href: '/sky' },
-    { label: 'Learn', href: '/learn' },   // NEW
+export type NavEntry =
+    | { type: 'link'; label: string; href: string }
+    | { type: 'group'; label: string; items: { label: string; href: string }[] }
+
+export const navLinks: NavEntry[] = [
+    { type: 'link', label: 'Home', href: '/' },
+    { type: 'link', label: 'Explore', href: '/celestial' },
+    { type: 'link', label: 'Solar System', href: '/solar-system' },
+    { type: 'link', label: 'Missions', href: '/missions' },
+    { type: 'link', label: 'People', href: '/people' },
+    {
+        type: 'group',
+        label: 'Live',
+        items: [
+            { label: 'Launches', href: '/launches' },
+            { label: 'ISS Tracker', href: '/iss' },
+            { label: 'NEO Tracker', href: '/neo' },
+            { label: 'Sky Tonight', href: '/sky' },
+        ],
+    },
+    { type: 'link', label: 'Learn', href: '/learn' },
 ] as const
+
 export const categories = [
     {
         label: 'Planets',
