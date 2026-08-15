@@ -34,20 +34,12 @@ export default function NewsSection() {
     const [apod, setApod] = useState<APOD | null>(null)
     const [articles, setArticles] = useState<Article[]>([])
     const [loading, setLoading] = useState(true)
-
     useEffect(() => {
-        const nasaKey = process.env.NEXT_PUBLIC_NASA_API_KEY
-
-        Promise.all([
-            fetch(`https://api.nasa.gov/planetary/apod?api_key=${nasaKey}`)
-                .then(r => r.json()),
-            fetch('https://api.spaceflightnewsapi.net/v4/articles/?limit=3&format=json')
-                .then(r => r.json())
-                .then(d => d.results),
-        ])
-            .then(([apodData, newsData]) => {
-                setApod(apodData)
-                setArticles(Array.isArray(newsData) ? newsData : [])
+        fetch('/api/live/home-feed')
+            .then(r => r.json())
+            .then((data) => {
+                setApod(data.apod)
+                setArticles(Array.isArray(data.articles) ? data.articles : [])
             })
             .catch(console.error)
             .finally(() => setLoading(false))
