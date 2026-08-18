@@ -15,7 +15,7 @@ const planets = [
         summary: 'Mercury is the smallest planet in the Solar System and the closest to the Sun. It has no atmosphere to retain heat, causing extreme temperature swings from 430°C during the day to -180°C at night.',
         massKg: 3.285e23,
         radiusKm: 2439.7,
-        imageUrl: 'https://images.unsplash.com/photo-1614732484003-ef9881555dc3?w=800&q=80',
+        imageUrl: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001922/GSFC_20171208_Archive_e001922~small.jpg',
         attributes: {
             distanceFromSun: '57.9 million km (0.39 AU)',
             orbitalPeriod: '88 Earth days',
@@ -36,7 +36,7 @@ const planets = [
         summary: 'Venus is the second planet from the Sun and the hottest in the Solar System despite not being closest to it. Its thick atmosphere traps heat in a runaway greenhouse effect, raising surface temperatures to 465°C.',
         massKg: 4.867e24,
         radiusKm: 6051.8,
-        imageUrl: 'https://images.unsplash.com/photo-1532968961962-8a0cb3a2d4f5?w=800&q=80',
+        imageUrl: 'https://images-assets.nasa.gov/image/PIA00007/PIA00007~medium.jpg',
         attributes: {
             distanceFromSun: '108.2 million km (0.72 AU)',
             orbitalPeriod: '224.7 Earth days',
@@ -57,7 +57,7 @@ const planets = [
         summary: 'Earth is the third planet from the Sun and the only known astronomical object to harbor life. It has one natural satellite, the Moon. About 71% of Earth\'s surface is covered by water.',
         massKg: 5.972e24,
         radiusKm: 6371,
-        imageUrl: 'https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=800&q=80',
+        imageUrl: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001386/GSFC_20171208_Archive_e001386~medium.jpg',
         attributes: {
             distanceFromSun: '149.6 million km (1 AU)',
             orbitalPeriod: '365.25 days',
@@ -78,7 +78,7 @@ const planets = [
         summary: 'Mars is the fourth planet from the Sun and the second-smallest in the Solar System. It is home to Olympus Mons, the tallest volcano in the Solar System, and Valles Marineris, one of the largest canyons.',
         massKg: 6.39e23,
         radiusKm: 3389.5,
-        imageUrl: 'https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=800&q=80',
+        imageUrl: 'https://images-assets.nasa.gov/image/PIA02992/PIA02992~medium.jpg',
         attributes: {
             distanceFromSun: '227.9 million km (1.52 AU)',
             orbitalPeriod: '687 Earth days',
@@ -100,7 +100,7 @@ const planets = [
         summary: 'Jupiter is the fifth planet from the Sun and the largest in the Solar System. It is a gas giant with a mass more than twice that of all other planets combined. The Great Red Spot is a storm that has persisted for at least 400 years.',
         massKg: 1.898e27,
         radiusKm: 69911,
-        imageUrl: 'https://images.unsplash.com/photo-1639921884918-8d28ab2e39a4?w=800&q=80',
+        imageUrl: 'https://images-assets.nasa.gov/image/PIA04866/PIA04866~medium.jpg',
         attributes: {
             distanceFromSun: '778.5 million km (5.2 AU)',
             orbitalPeriod: '11.86 Earth years',
@@ -122,7 +122,7 @@ const planets = [
         summary: 'Saturn is the sixth planet from the Sun and the second-largest. It is famous for its spectacular ring system, composed of ice and rock. Saturn is the least dense planet — it would float in water.',
         massKg: 5.683e26,
         radiusKm: 58232,
-        imageUrl: 'https://images.unsplash.com/photo-1614314107768-6018061b5b72?w=800&q=80',
+        imageUrl: 'https://images-assets.nasa.gov/image/PIA17172/PIA17172~medium.jpg',
         attributes: {
             distanceFromSun: '1.43 billion km (9.58 AU)',
             orbitalPeriod: '29.46 Earth years',
@@ -144,7 +144,7 @@ const planets = [
         summary: 'Uranus is the seventh planet from the Sun. It rotates on its side with an axial tilt of 98°, meaning its poles experience 42 years of sunlight followed by 42 years of darkness. It is an ice giant with a blue-green hue from atmospheric methane.',
         massKg: 8.681e25,
         radiusKm: 25362,
-        imageUrl: 'https://images.unsplash.com/photo-1614313913007-2b4ae8ce32d6?w=800&q=80',
+        imageUrl: 'https://images-assets.nasa.gov/image/PIA18182/PIA18182~medium.jpg',
         attributes: {
             distanceFromSun: '2.87 billion km (19.2 AU)',
             orbitalPeriod: '84 Earth years',
@@ -166,7 +166,7 @@ const planets = [
         summary: 'Neptune is the eighth and farthest known planet from the Sun. It is an ice giant with the strongest winds in the Solar System, reaching speeds of 2,100 km/h. It was the first planet predicted by mathematics before being observed.',
         massKg: 1.024e26,
         radiusKm: 24622,
-        imageUrl: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=800&q=80',
+        imageUrl: 'https://images-assets.nasa.gov/image/PIA00046/PIA00046~small.jpg',
         attributes: {
             distanceFromSun: '4.5 billion km (30.07 AU)',
             orbitalPeriod: '164.8 Earth years',
@@ -191,7 +191,7 @@ const dwarfPlanets = [
         summary: 'Pluto is a dwarf planet in the Kuiper Belt. It was considered the ninth planet until 2006 when the IAU reclassified it. The New Horizons spacecraft conducted a flyby in 2015, revealing a heart-shaped nitrogen ice plain called Tombaugh Regio.',
         massKg: 1.303e22,
         radiusKm: 1188.3,
-        imageUrl: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=800&q=80',
+        imageUrl: 'https://images-assets.nasa.gov/image/PIA20201/PIA20201~medium.jpg',
         attributes: {
             distanceFromSun: '5.9 billion km (39.5 AU)',
             orbitalPeriod: '248 Earth years',

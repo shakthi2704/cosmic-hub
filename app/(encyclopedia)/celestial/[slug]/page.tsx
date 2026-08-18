@@ -6,6 +6,7 @@ import { getCelestialBySlug } from '@/lib/services/celestial.service'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import { CelestialType, MissionStatus } from '@prisma/client'
+import ExoplanetVisual from '@/components/celestial/ExoplanetVisual'
 
 // ─── Helpers ─────────────────────────────────────────────
 
@@ -197,6 +198,32 @@ export default async function CelestialDetailPage({
                         className="object-cover opacity-60"
                         sizes="100vw"
                     />
+                ) : obj.type === 'EXOPLANET' ? (
+                    <div className="absolute inset-0 flex items-center justify-center overflow-hidden bg-black">
+                        <div className="absolute inset-0" aria-hidden>
+                            {Array.from({ length: 60 }, (_, i) => (
+                                <span
+                                    key={i}
+                                    className="absolute rounded-full bg-white animate-twinkle"
+                                    style={{
+                                        top: `${(i * 53.7) % 100}%`,
+                                        left: `${(i * 71.3) % 100}%`,
+                                        width: i % 9 === 0 ? '2px' : '1px',
+                                        height: i % 9 === 0 ? '2px' : '1px',
+                                        opacity: 0.15 + (i % 8) * 0.05,
+                                        '--dur': `${3 + (i % 5)}s`,
+                                        animationDelay: `${i % 6}s`,
+                                    } as CSSProperties}
+                                />
+                            ))}
+                        </div>
+                        <ExoplanetVisual
+                            slug={obj.slug}
+                            radiusEarthRadii={(obj.attributes as Record<string, unknown> | null)?.radiusEarthRadii as number | null}
+                            equilibriumTempK={(obj.attributes as Record<string, unknown> | null)?.equilibriumTempK as number | null}
+                            size={260}
+                        />
+                    </div>
                 ) : (
                     <div className="absolute inset-0 overflow-hidden bg-black">
                         {/* Star field */}

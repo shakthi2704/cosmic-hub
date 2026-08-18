@@ -7,6 +7,7 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import ViewToggle from '@/components/encyclopedia/ViewToggle'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import ExoplanetVisual from '@/components/celestial/ExoplanetVisual'
 
 const TYPE_META: Record<CelestialType, { label: string; accent: string }> = {
     PLANET: { label: 'Planet', accent: '#4a90d9' },
@@ -49,6 +50,29 @@ function ObjectCardGrid({ obj }: { obj: Awaited<ReturnType<typeof getCelestialOb
                         className="object-cover transition-transform duration-500 group-hover:scale-105 opacity-80"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
+                ) : obj.type === 'EXOPLANET' ? (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        {Array.from({ length: 10 }, (_, i) => (
+                            <span
+                                key={i}
+                                className="absolute rounded-full bg-white animate-twinkle"
+                                style={{
+                                    top: `${(i * 37.1) % 100}%`,
+                                    left: `${(i * 61.7) % 100}%`,
+                                    width: '1px',
+                                    height: '1px',
+                                    opacity: 0.1 + (i % 5) * 0.04,
+                                    animationDelay: `${i % 5}s`,
+                                }}
+                            />
+                        ))}
+                        <ExoplanetVisual
+                            slug={obj.slug}
+                            radiusEarthRadii={(obj.attributes as Record<string, unknown> | null)?.radiusEarthRadii as number | null}
+                            equilibriumTempK={(obj.attributes as Record<string, unknown> | null)?.equilibriumTempK as number | null}
+                            size={104}
+                        />
+                    </div>
                 ) : (
                     <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
                         {Array.from({ length: 14 }, (_, i) => (

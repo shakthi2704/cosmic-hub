@@ -15,6 +15,7 @@ export const navLinks: NavEntry[] = [
             { label: 'Launches', href: '/launches' },
             { label: 'ISS Tracker', href: '/iss' },
             { label: 'NEO Tracker', href: '/neo' },
+            { label: 'Space Weather', href: '/space-weather' },
             { label: 'Sky Tonight', href: '/sky' },
         ],
     },

@@ -169,4 +169,67 @@ export async function getNearEarthObjects(): Promise<NearEarthObject[]> {
     })
 }
 
+// ─── Space Weather ──────────────────────────────────────────
+
+export interface SpaceWeather {
+    kpIndex: number
+    kpCategory: string // Quiet, Unsettled, Active, or G1–G5 storm level
+    kpTimestamp: string
+    flareClass: string // e.g. "B8.9", "M1.2", "X2.1"
+    flareTimestamp: string
+    auroraLikely: boolean // rough heuristic: Kp >= 5 means aurora may be visible outside polar regions
+}
+
+function classifyXrayFlux(flux: number): string {
+    if (flux < 1e-7) return `A${(flux / 1e-8).toFixed(1)}`
+    if (flux < 1e-6) return `B${(flux / 1e-7).toFixed(1)}`
+    if (flux < 1e-5) return `C${(flux / 1e-6).toFixed(1)}`
+    if (flux < 1e-4) return `M${(flux / 1e-5).toFixed(1)}`
+    return `X${(flux / 1e-4).toFixed(1)}`
+}
+
+function classifyKp(kp: number): string {
+    if (kp < 4) return 'Quiet'
+    if (kp < 5) return 'Unsettled'
+    if (kp < 6) return 'G1 – Minor storm'
+    if (kp < 7) return 'G2 – Moderate storm'
+    if (kp < 8) return 'G3 – Strong storm'
+    if (kp < 9) return 'G4 – Severe storm'
+    return 'G5 – Extreme storm'
+}
+
+export async function getSpaceWeather(): Promise<SpaceWeather> {
+    return withCache('live:space-weather', TTL.LIVE_WEATHER, async () => {
+        const [kpRes, xrayRes] = await Promise.all([
+            fetch('https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json', {
+                next: { revalidate: TTL.LIVE_WEATHER },
+            }),
+            fetch('https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json', {
+                next: { revalidate: TTL.LIVE_WEATHER },
+            }),
+        ])
+        if (!kpRes.ok) throw new Error(`SWPC Kp API error: ${kpRes.status}`)
+        if (!xrayRes.ok) throw new Error(`SWPC X-ray API error: ${xrayRes.status}`)
+
+        const kpData: { time_tag: string; Kp: number }[] = await kpRes.json()
+        const xrayData: { time_tag: string; flux: number; energy: string }[] = await xrayRes.json()
+
+        const latestKp = kpData[kpData.length - 1]
+        const longChannelReadings = xrayData.filter((r) => r.energy === '0.1-0.8nm')
+        const latestFlare = longChannelReadings[longChannelReadings.length - 1]
+
+        return {
+            kpIndex: latestKp.Kp,
+            kpCategory: classifyKp(latestKp.Kp),
+            kpTimestamp: latestKp.time_tag,
+            flareClass: classifyXrayFlux(latestFlare.flux),
+            flareTimestamp: latestFlare.time_tag,
+            auroraLikely: latestKp.Kp >= 5,
+        }
+    })
+}
+
 // ─── Space News ───────────────────────────────────────────
+
+// ─── Space News ───────────────────────────────────────────
+
