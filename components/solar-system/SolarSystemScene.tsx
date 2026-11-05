@@ -1,9 +1,10 @@
 'use client'
 
-import { Suspense, useMemo, useRef, useState } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { OrbitControls, Stars, Html, Line } from '@react-three/drei'
+import TextureBoundary from './TextureBoundary'
 import * as THREE from 'three'
 import {
     PLANET_ORBITAL_ELEMENTS,
@@ -102,11 +103,49 @@ function useSaturnRingTexture() {
     }, [])
 }
 
+// function SaturnRing({ size }: { size: number }) {
+//     const texture = useLoader(THREE.TextureLoader, SATURN_RING_TEXTURE_URL)
+//     return (
+//         <mesh rotation={[Math.PI / 2.2, 0, 0]}>
+//             <ringGeometry args={[size * 1.3, size * 2.2, 64]} />
+//             <meshBasicMaterial
+//                 map={texture}
+//                 transparent
+//                 opacity={0.9}
+//                 side={THREE.DoubleSide}
+//                 depthWrite={false}
+//             />
+//         </mesh>
+//     )
+// }
+
+// ─── Planet ─────────────────────────────────────────────────
+
+
 function SaturnRing({ size }: { size: number }) {
     const texture = useLoader(THREE.TextureLoader, SATURN_RING_TEXTURE_URL)
+
+    // RingGeometry maps the image flat across the disc by default. The ring
+    // texture is a 1D strip (inner edge -> outer edge), so we remap each
+    // vertex's U coordinate to its distance from the planet's centre.
+    const geometry = useMemo(() => {
+        const inner = size * 1.3
+        const outer = size * 2.2
+        const geo = new THREE.RingGeometry(inner, outer, 128)
+        const pos = geo.attributes.position
+        const uv = geo.attributes.uv
+        const v = new THREE.Vector3()
+        for (let i = 0; i < pos.count; i++) {
+            v.fromBufferAttribute(pos, i)
+            uv.setXY(i, (v.length() - inner) / (outer - inner), 0.5)
+        }
+        return geo
+    }, [size])
+
+    useEffect(() => () => geometry.dispose(), [geometry])
+
     return (
-        <mesh rotation={[Math.PI / 2.2, 0, 0]}>
-            <ringGeometry args={[size * 1.3, size * 2.2, 64]} />
+        <mesh geometry={geometry} rotation={[-Math.PI / 2, 0, 0]}>
             <meshBasicMaterial
                 map={texture}
                 transparent
@@ -117,9 +156,6 @@ function SaturnRing({ size }: { size: number }) {
         </mesh>
     )
 }
-
-// ─── Planet ─────────────────────────────────────────────────
-
 function Planet({
     data,
     angle,
@@ -152,6 +188,7 @@ function Planet({
 
     return (
         <group position={[x, 0, z]}>
+            {/* 1. The planet itself (this group spins) */}
             <group
                 ref={groupRef}
                 onClick={interactive ? () => router.push(`/celestial/${data.slug}`) : undefined}
@@ -159,19 +196,32 @@ function Planet({
                 onPointerOut={interactive ? () => setHovered(false) : undefined}
                 scale={hovered ? 1.15 : 1}
             >
-                <Suspense fallback={<PlanetSurfaceFallback size={size} color={color} />}>
-                    {textureUrl ? (
-                        <PlanetSurface size={size} textureUrl={textureUrl} />
-                    ) : (
-                        <PlanetSurfaceFallback size={size} color={color} />
-                    )}
-                </Suspense>
-                {data.slug === 'saturn' && (
-                    <Suspense fallback={null}>
-                        <SaturnRing size={size} />
+                <TextureBoundary fallback={<PlanetSurfaceFallback size={size} color={color} />}>
+                    <Suspense fallback={<PlanetSurfaceFallback size={size} color={color} />}>
+                        {textureUrl ? (
+                            <PlanetSurface size={size} textureUrl={textureUrl} />
+                        ) : (
+                            <PlanetSurfaceFallback size={size} color={color} />
+                        )}
                     </Suspense>
-                )}
+                </TextureBoundary>
             </group>
+
+            {/* 2. Saturn's ring (separate, does NOT spin, tilted 26.7°) */}
+            {data.slug === 'saturn' && (
+                <group
+                    rotation={[0, 0, THREE.MathUtils.degToRad(26.7)]}
+                    scale={hovered ? 1.15 : 1}
+                >
+                    <TextureBoundary fallback={null}>
+                        <Suspense fallback={null}>
+                            <SaturnRing size={size} />
+                        </Suspense>
+                    </TextureBoundary>
+                </group>
+            )}
+
+            {/* 3. The name label */}
             {(showLabel || hovered) && (
                 <Html distanceFactor={10} style={{ pointerEvents: 'none' }}>
                     <div
@@ -221,9 +271,11 @@ function Sun() {
     })
     return (
         <group ref={groupRef}>
-            <Suspense fallback={<SunSurfaceFallback />}>
-                <SunSurface />
-            </Suspense>
+            <TextureBoundary fallback={<SunSurfaceFallback />}>
+                <Suspense fallback={<SunSurfaceFallback />}>
+                    <SunSurface />
+                </Suspense>
+            </TextureBoundary>
             <pointLight position={[0, 0, 0]} intensity={4} distance={80} decay={1.2} color="#fff4e0" />
         </group>
     )

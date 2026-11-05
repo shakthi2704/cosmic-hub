@@ -21,8 +21,7 @@ export interface OrbitalElements {
     textureUrl: string
 }
 
-const TEX = (filename: string) =>
-    `https://raw.githubusercontent.com/dogahwisdom/solar-system/master/texture/${filename}`
+const TEX = (filename: string) => `/textures/${filename}`
 
 export const PLANET_ORBITAL_ELEMENTS: OrbitalElements[] = [
     { slug: 'mercury', semiMajorAxisAU: 0.387, orbitalPeriodDays: 87.969, meanLongitudeAtEpochDeg: 252.25, displayColor: '#9c9591', textureUrl: TEX('2k_mercury.jpg') },
