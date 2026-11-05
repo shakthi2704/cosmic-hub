@@ -10,37 +10,78 @@ export const TTL = {
     STATIC_LIST: 60 * 60 * 24,
 } as const
 
+// ─── Redis safety net ───────────────────────────────────────
+// A slow or dead Redis must never slow down or break a page.
+// 1. Each Redis call gets a short timeout.
+// 2. After one failure, Redis is skipped for a cooldown period.
+
+const REDIS_TIMEOUT_MS = 1500
+const REDIS_COOLDOWN_MS = 60_000
+
+let redisDownUntil = 0
+
+function redisAvailable(): boolean {
+    return cache !== null && Date.now() >= redisDownUntil
+}
+
+function markRedisDown(op: string, key: string, err: unknown) {
+    redisDownUntil = Date.now() + REDIS_COOLDOWN_MS
+    const reason = err instanceof Error ? err.message : String(err)
+    console.warn(
+        `[cache] Redis unavailable (${op} key=${key}): ${reason}. Skipping Redis for ${REDIS_COOLDOWN_MS / 1000}s.`
+    )
+}
+
+function withTimeout<T>(promise: Promise<T>): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error('Redis timeout')), REDIS_TIMEOUT_MS)
+        promise.then(
+            (value) => {
+                clearTimeout(timer)
+                resolve(value)
+            },
+            (error) => {
+                clearTimeout(timer)
+                reject(error)
+            }
+        )
+    })
+}
+
+// ─── Public helpers ─────────────────────────────────────────
+
 export async function withCache<T>(
     key: string,
     ttl: number,
     fetcher: () => Promise<T>
 ): Promise<T> {
-    try {
-        const cached = await cache.get<T>(key)
-        if (cached !== null && cached !== undefined) {
-            console.log(`[cache] HIT key=${key}`)
-            return cached
+    if (cache && redisAvailable()) {
+        try {
+            const cached = await withTimeout(cache.get<T>(key))
+            if (cached !== null && cached !== undefined) return cached
+        } catch (err) {
+            markRedisDown('GET', key, err)
         }
-    } catch (err) {
-        console.warn(`[cache] GET failed key=${key}`, err)
     }
 
     const fresh = await fetcher()
 
-    try {
-        await cache.set(key, fresh, { ex: ttl })
-        console.log(`[cache] SET key=${key} ttl=${ttl}s`)
-    } catch (err) {
-        console.warn(`[cache] SET failed key=${key}`, err)
+    if (cache && redisAvailable()) {
+        try {
+            await withTimeout(cache.set(key, fresh, { ex: ttl }))
+        } catch (err) {
+            markRedisDown('SET', key, err)
+        }
     }
 
     return fresh
 }
 
 export async function invalidateCache(key: string) {
+    if (!cache || !redisAvailable()) return
     try {
-        await cache.del(key)
+        await withTimeout(cache.del(key))
     } catch (err) {
-        console.warn(`[cache] DEL failed key=${key}`, err)
+        markRedisDown('DEL', key, err)
     }
 }
