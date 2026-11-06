@@ -1,13 +1,31 @@
+export type NavItem = { label: string; href: string }
+
 export type NavEntry =
     | { type: 'link'; label: string; href: string }
-    | { type: 'group'; label: string; items: { label: string; href: string }[] }
+    | { type: 'group'; label: string; items: NavItem[] }
 
+/**
+ * Main navigation. Only link to pages that exist: new entries
+ * (Experiences, Blog, the category pages) are added as those pages are built.
+ */
 export const navLinks: NavEntry[] = [
-    { type: 'link', label: 'Home', href: '/' },
-    { type: 'link', label: 'Explore', href: '/celestial' },
-    { type: 'link', label: 'Solar System', href: '/solar-system' },
-    { type: 'link', label: 'Missions', href: '/missions' },
-    { type: 'link', label: 'People', href: '/people' },
+    {
+        type: 'group',
+        label: 'Explore',
+        items: [
+            { label: 'Solar System', href: '/solar-system' },
+            { label: 'Celestial Catalogue', href: '/celestial' },
+        ],
+    },
+    {
+        type: 'group',
+        label: 'Exploration',
+        items: [
+            { label: 'Missions', href: '/missions' },
+            { label: 'Agencies', href: '/agencies' },
+            { label: 'People', href: '/people' },
+        ],
+    },
     {
         type: 'group',
         label: 'Live',
@@ -20,7 +38,7 @@ export const navLinks: NavEntry[] = [
         ],
     },
     { type: 'link', label: 'Learn', href: '/learn' },
-] as const
+]
 
 export const categories = [
     {

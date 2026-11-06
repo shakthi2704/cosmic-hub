@@ -1,4 +1,4 @@
-import Hero from '@/components/home/Hero'
+import HomeJourney from '@/components/home/HomeJourney'
 import LiveBanner from '@/components/home/LiveBanner'
 import ExploreCategories from '@/components/home/ExploreCategories'
 import SolarSystemTeaser from '@/components/home/SolarSystemTeaser'
@@ -8,7 +8,7 @@ import NewsSection from '@/components/home/NewsSection'
 export default function HomePage() {
   return (
     <>
-      <Hero />
+      <HomeJourney />
       <LiveBanner />
       <ExploreCategories />
       <SolarSystemTeaser />
